@@ -44,7 +44,7 @@ const SubTitleBox = styled.div`
   margin: auto;
   margin-top: 95px;
   margin-bottom: 40px;
-  color: #000;
+  color: #5c89ff;
   text-align: center;
   font-family: Inter;
   font-size: 15px;
@@ -108,6 +108,8 @@ const LoginPage = () => {
         if (user.id === id) {
           if (user.password === password) {
             //handleSetUserInfo(user.name, user.id);
+            localStorage.setItem("username", user.name);
+            localStorage.setItem("useremail", user.email);
             alert("로그인되었습니다.");
 
             isLoginSuccess = true; // 로그인 성공으로 플래그 설정
@@ -120,7 +122,7 @@ const LoginPage = () => {
           }
         }
       });
-      // 사용자 정보를 찾지 못한 경우 로그인 실패 처리
+      // 사용자 정보 찾지 X
       if (!isLoginSuccess && !isLoginFailed) {
         alert("회원 정보가 없습니다.");
       }

@@ -44,7 +44,7 @@ const SubTitleBox = styled.div`
   margin: auto;
   margin-top: 95px;
   margin-bottom: 40px;
-  color: #000;
+  color: #5c89ff;
   text-align: center;
   font-family: Inter;
   font-size: 15px;
@@ -106,10 +106,10 @@ const SignUpPage = () => {
 
   const onSubmit = async () => {
     try {
-      // 연동 세팅 (일단 주석 처리)
       //이메일 중복체크 get
       const getResponse = await axios.get(`${BACKEND_URL}`);
       const users = getResponse.data;
+      console.log(users);
       if (users.find((user) => user.email === email)) {
         alert("이미 있는 계정입니다.");
         return;
@@ -121,6 +121,8 @@ const SignUpPage = () => {
         email: email,
         name: name,
       });
+      console.log("회원가입 요청 성공:", response); // 테스트
+
       if (!response.data) {
         alert("등록에 실패했습니다");
         throw new Error();

@@ -101,9 +101,6 @@ const Home = () => {
   const goSignup = () => {
     navigate("/SignUpPage");
   };
-  const goKakao = () => {
-    navigate(""); // 카카오 링크 설정
-  };
 
   return (
     <Container>
@@ -113,7 +110,7 @@ const Home = () => {
       <LoginBtn onClick={goLogin}></LoginBtn>
       <SignupBtn onClick={goSignup}></SignupBtn>
       <Link to="https://accounts.kakao.com/login/?continue=https%3A%2F%2Fdevelopers.kakao.com%2Flogin%3Fcontinue%3Dhttps%253A%252F%252Fdevelopers.kakao.com%252Fdocs%252Flatest%252Fko%252Fkakaologin%252Fcommon&lang=ko#login">
-        <KakaoBtn onClick={goKakao}></KakaoBtn>
+        <KakaoBtn></KakaoBtn>
       </Link>
     </Container>
   );
