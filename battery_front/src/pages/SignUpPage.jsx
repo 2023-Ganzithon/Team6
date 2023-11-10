@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -108,23 +108,23 @@ const SignUpPage = () => {
     try {
       // 연동 세팅 (일단 주석 처리)
       //이메일 중복체크 get
-      // const getResponse = await axios.get(`${BACKEND_URL}`);
-      // const users = getResponse.data;
-      // if (users.find((user) => user.email === email)) {
-      //   alert("이미 있는 계정입니다.");
-      //   return;
-      // }
-      // // 회원가입
-      // const response = await axios.post(`${BACKEND_URL}`, {
-      //   id: id,
-      //   password: password,
-      //   email: email,
-      //   name: name,
-      // });
-      // if (!response.data) {
-      //   alert("등록에 실패했습니다");
-      //   throw new Error();
-      // }
+      const getResponse = await axios.get(`${BACKEND_URL}`);
+      const users = getResponse.data;
+      if (users.find((user) => user.email === email)) {
+        alert("이미 있는 계정입니다.");
+        return;
+      }
+      // 회원가입
+      const response = await axios.post(`${BACKEND_URL}`, {
+        id: id,
+        password: password,
+        email: email,
+        name: name,
+      });
+      if (!response.data) {
+        alert("등록에 실패했습니다");
+        throw new Error();
+      }
       navigate("/LoginPage");
     } catch (error) {
       console.error("회원가입 실패:", error);

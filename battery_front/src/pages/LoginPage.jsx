@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -96,11 +96,46 @@ const LoginPage = () => {
     navigate("/Map");
   };
 
+  const onSubmit = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_URL}`);
+      const users = response.data;
+
+      let isLoginSuccess = false; // 로그인 성공 여부를 나타내는 변수
+      let isLoginFailed = false;
+
+      users.forEach((user) => {
+        if (user.id === id) {
+          if (user.password === password) {
+            //handleSetUserInfo(user.name, user.id);
+            alert("로그인되었습니다.");
+
+            isLoginSuccess = true; // 로그인 성공으로 플래그 설정
+            isLoginFailed = false;
+            //handleLogin();
+            gotoMap();
+          } else {
+            alert("비밀번호가 틀렸습니다.");
+            isLoginFailed = true;
+          }
+        }
+      });
+      // 사용자 정보를 찾지 못한 경우 로그인 실패 처리
+      if (!isLoginSuccess && !isLoginFailed) {
+        alert("회원 정보가 없습니다.");
+      }
+    } catch (error) {
+      // 로그인 오류 처리
+      alert("로그인 실패: " + error.response.data.message);
+    }
+  };
+
   // 입력 데이터 state 담기
   const [userData, setUserData] = useState({
     id: "",
     password: "",
   });
+
   // 입력값 바뀔 때마다 저장
   const handleInput = (e) => {
     setUserData({
@@ -129,7 +164,7 @@ const LoginPage = () => {
           placeholder="비밀번호"
         ></InputBox>
       </Box>
-      <LoginBtn onClick={gotoMap}></LoginBtn>
+      <LoginBtn onClick={onSubmit}></LoginBtn>
     </Container>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css, keyframes } from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Container = styled.div`
   min-height: 844px;
   position: relative;
   text-align: center;
-  background-color: #f5f5f5;
+  background-color: white;
   overflow: hidden; /* 스크롤바 숨기기 */
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -135,13 +135,18 @@ const GoRentalBtn = styled.button`
 const { kakao } = window;
 
 const Map = () => {
+  // 이전 페이지에서 변수 받아오기-> rental 페이지에서 아래 코드 작성
+  // const location = useLocation();
+  // const { loc } = location.state;
+
+  const [locList, setLocList] = useState([]);
   const navigate = useNavigate();
   const goMyPage = () => {
     navigate("/MyPage");
   };
   const goRental = () => {
     // 대여 장소 같이 보내야 함
-    navigate("/Rental");
+    navigate("/Rental", { state: { loc: selectedMarkerTitle } });
   };
   const [modalOpen, setModalOpen] = useState(false);
   const closeModal = () => {
@@ -152,6 +157,16 @@ const Map = () => {
 
   // 카카오맵 띄우기
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}`);
+        locList = response.data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData(); // useEffect에서 fetchData 함수 호출
+
     var container = document.getElementById("map");
     var options = {
       center: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657), // 지도 중심좌표(판교 디지털센터)
@@ -160,34 +175,31 @@ const Map = () => {
     var map = new kakao.maps.Map(container, options);
 
     // 마커 생성
-    var markerPosition = new kakao.maps.LatLng(
-      37.401121424252246,
-      127.10347075711505
-    );
-    var markerPosition2 = new kakao.maps.LatLng(
-      37.4033458356304,
-      127.0995151230583
-    );
-    var marker = new kakao.maps.Marker({
-      position: markerPosition,
-    });
-    var marker2 = new kakao.maps.Marker({
-      position: markerPosition2,
-    });
-    marker.setMap(map);
-    marker2.setMap(map);
+    const markerData = [
+      {
+        title: "GS25 판교GB점",
+        position: new kakao.maps.LatLng(37.401121424252246, 127.10347075711505),
+        remaining: 20,
+      },
+      {
+        title: "장소2",
+        position: new kakao.maps.LatLng(37.4033458356304, 127.0995151230583),
+        remaining: 30,
+      },
+      // 추가 마커 정보
+    ];
 
-    // 마커 클릭 이벤트
-    kakao.maps.event.addListener(marker, "click", () => {
-      setModalOpen(true);
-      setSelectedMarkerTitle("GS25 판교GB점");
-      setRemaining("30");
-    });
-
-    kakao.maps.event.addListener(marker2, "click", () => {
-      setModalOpen(true);
-      setSelectedMarkerTitle("장소2");
-      setRemaining("20");
+    // 마커 생성 및 이벤트 설정 반복문
+    markerData.forEach((data) => {
+      const marker = new kakao.maps.Marker({
+        position: data.position,
+      });
+      marker.setMap(map);
+      kakao.maps.event.addListener(marker, "click", () => {
+        setModalOpen(true);
+        setSelectedMarkerTitle(data.title); // 장소state
+        setRemaining(data.remaining); // 수량state
+      });
     });
 
     kakao.maps.event.addListener(map, "click", () => {
@@ -207,7 +219,7 @@ const Map = () => {
           }}
         />
       </MypageBtn>
-      <MapBox id="map" style={{ width: "370px", height: "760px" }}></MapBox>
+      <MapBox id="map" style={{ width: "100%", height: "760px" }}></MapBox>
       {/* 모달 */}
       <Modal open={modalOpen}>
         <PopupBox>
