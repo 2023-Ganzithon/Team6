@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker"; // 날짜 선택 컴포넌트를 가져옵니다.
 import "react-datepicker/dist/react-datepicker.css"; // 스타일을 가져옵니다.
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -83,7 +83,8 @@ const AaBattery = styled.div`
   letter-spacing: 0px;
   text-decoration: none;
   text-transform: none;
-  margin-bottom: 10px; /* 각 컨테이너 사이에 간격 추가 */
+  margin-top: 20px;
+  margin-bottom: -20px; /* 각 컨테이너 사이에 간격 추가 */
 `;
 
 const Line = styled.div`
@@ -151,6 +152,22 @@ const PriceNum = styled.div`
   left: 145px;
   top: 220px;
 `;
+const RentalDate = styled.div`
+  text-align: center;
+  white-space: pre-wrap;
+  font-synthesis: none;
+  color: rgba(0, 0, 0, 1);
+  font-style: normal;
+  font-family: Inter;
+  font-weight: 400;
+  font-size: 15px;
+  letter-spacing: 0px;
+  text-decoration: none;
+  text-transform: none;
+  position: absolute;
+  left: 145px;
+  top: 300px;
+`;
 
 const RentDateContainer = styled.div`
   display: flex;
@@ -169,22 +186,6 @@ const RentDate = styled.div`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-`;
-const RentDateNum = styled.div`
-  text-align: center;
-  white-space: pre-wrap;
-  font-synthesis: none;
-  color: rgba(0, 0, 0, 1);
-  font-style: normal;
-  font-family: Inter;
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: 0px;
-  text-decoration: none;
-  text-transform: none;
-  position: absolute;
-  left: 110px;
-  top: 300px;
 `;
 const QuantityContainer = styled.div`
   display: flex;
@@ -282,24 +283,6 @@ const ModalButton = styled.button`
   cursor: pointer;
 `;
 
-const RentDateNumButton = styled.button`
-  text-align: center;
-  white-space: pre-wrap;
-  font-synthesis: none;
-  color: rgba(0, 0, 0, 1);
-  font-style: normal;
-  font-family: Inter;
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: 0px;
-  text-decoration: none;
-  text-transform: none;
-  position: absolute;
-  left: 110px;
-  top: 300px;
-  cursor: pointer;
-`;
-
 const RentDateColumn = styled.div`
   display: flex;
   align-items: column;
@@ -310,7 +293,19 @@ const Rental = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
   const navigate = useNavigate();
-  const [selectedDate, setSelectedDate] = useState(null); // 선택한 날짜를 추적하는 상태
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  useEffect(() => {
+    // 컴포넌트가 처음 렌더링될 때만 실행
+    setCurrentDate(new Date());
+  }, []); // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 렌더링될 때만 useEffect를 실행
+
+  // 날짜 형식 설정 옵션
+  const dateFormatOptions = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  };
 
   const handleBackClick = () => {
     navigate("/Map");
@@ -353,25 +348,9 @@ const Rental = () => {
           <BoltBlack1></BoltBlack1>
           <RentDateColumn>
             <RentDate>대여일자</RentDate>
-            {/* RentDateNum을 버튼으로 대체 */}
-            <RentDateNumButton
-              onClick={() => setConfirmationMessage("날짜 선택")}
-            >
-              {selectedDate ? selectedDate.toDateString() : "날짜 선택"}
-            </RentDateNumButton>
-            {/* DatePicker 컴포넌트 사용 */}
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date) => setSelectedDate(date)}
-              dateFormat="yyyy년 MM월 dd일"
-              withPortal
-              popperModifiers={{
-                preventOverflow: {
-                  enabled: true,
-                },
-              }}
-              popperPlacement="auto"
-            />
+            <RentalDate>
+              {currentDate.toLocaleDateString("ko-KR", dateFormatOptions)}
+            </RentalDate>
           </RentDateColumn>
         </RentDateContainer>
         <QuantityContainer>

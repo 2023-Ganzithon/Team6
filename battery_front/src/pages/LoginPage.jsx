@@ -107,14 +107,12 @@ const LoginPage = () => {
       users.forEach((user) => {
         if (user.id === id) {
           if (user.password === password) {
-            //handleSetUserInfo(user.name, user.id);
             localStorage.setItem("username", user.name);
             localStorage.setItem("useremail", user.email);
             alert("로그인되었습니다.");
 
             isLoginSuccess = true; // 로그인 성공으로 플래그 설정
             isLoginFailed = false;
-            //handleLogin();
             gotoMap();
           } else {
             alert("비밀번호가 틀렸습니다.");
