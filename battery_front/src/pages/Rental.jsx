@@ -332,9 +332,9 @@ const Rental = () => {
   const handleYesButtonClick = async () => {
     //연동 코드 추가
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/rent/${placeId}`, {
+      const response = await axios.post(`/api/rent/${placeId}`, {
         userEmail: useremail,
-        location: location, //무슨 장소 정보?
+        location: location, //무슨 장소 정보?-> 보내야하는가?
         numofBattery: quantity,
       });
       console.log("회원가입 요청 성공:", response); // 테스트

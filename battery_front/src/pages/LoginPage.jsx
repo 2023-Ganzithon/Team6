@@ -98,7 +98,7 @@ const LoginPage = () => {
 
   const onSubmit = async () => {
     try {
-      const response = await axios.get(`${BACKEND_URL}`);
+      const response = await axios.post(`/api/member/login`);
       const users = response.data;
 
       let isLoginSuccess = false; // 로그인 성공 여부를 나타내는 변수

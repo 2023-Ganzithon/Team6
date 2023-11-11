@@ -452,28 +452,26 @@ const MyPage = () => {
   const [showModal, setShowModal] = useState(false);
 
   // 연동
-  // const { username } = localStorage.getItem("username");
-  // const { useremail } = localStorage.getItem("useremail");
+  const { username } = localStorage.getItem("username");
+  const { useremail } = localStorage.getItem("useremail");
+
   const [rentalList, setRentalList] = useState([3]);
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     try {
-  //       // API 호출
-  //       const response = await axios.post(
-  //         `/api/${BACKEND_URL}/mypage/rental-info`,
-  //         {
-  //           name: username,
-  //           email: useremail,
-  //         }
-  //       );
-  //       setRentalList(response.data);
-  //       console.log(response.data);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     }
-  //   };
-  //   fetchData();
-  // }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // API 호출
+        const response = await axios.post(`/api/mypage/rental-info`, {
+          name: username,
+          email: useremail,
+        });
+        setRentalList(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const navigate = useNavigate();
 
@@ -502,18 +500,18 @@ const MyPage = () => {
         <Smile></Smile>
         <BackArrow onClick={handleBackClick2}></BackArrow>
         <NameHiRow>
-          <NameHiValue>손오공</NameHiValue> {/* username */}
+          <NameHiValue>{username}</NameHiValue>
           <NameHi>님, 안녕하세요</NameHi>
         </NameHiRow>
         <MyInfo>내 정보</MyInfo>
         <Line1></Line1>
         <NameHiRow>
           <Name>이름</Name>
-          <NameValue>손오공</NameValue>
+          <NameValue>{username}</NameValue>
         </NameHiRow>
         <EmailRow>
           <Email>이메일</Email>
-          <EmailValue>xxx@likelion.org</EmailValue> {/*{useremail} */}
+          <EmailValue>{useremail}</EmailValue>
         </EmailRow>
       </Rectangle1>
       <Battery></Battery>
@@ -525,15 +523,15 @@ const MyPage = () => {
           <Rectangle2 key={e.id}>
             <PlaceRow0>
               <Place>대여 위치</Place>
-              <PlaceValue>GS25 판교역점</PlaceValue>
+              <PlaceValue>{e.location}</PlaceValue>
             </PlaceRow0>
             <TermRow0>
               <Term>대여 기간</Term>
-              <TermValue>2023/11/04-현재</TermValue>
+              <TermValue>{e.startDate}-현재</TermValue>
             </TermRow0>
             <QuantityRow0>
               <Quantity>대여 수량</Quantity>
-              <QuantityValue>5개</QuantityValue>
+              <QuantityValue>{e.quantitiy}</QuantityValue>
             </QuantityRow0>
             <PriceRow0>
               <Price>가격</Price>
