@@ -460,7 +460,7 @@ const MyPage = () => {
   //     try {
   //       // API 호출
   //       const response = await axios.post(
-  //         `${BACKEND_URL}/api/mypage/rental-info`,
+  //         `/api/${BACKEND_URL}/mypage/rental-info`,
   //         {
   //           name: username,
   //           email: useremail,

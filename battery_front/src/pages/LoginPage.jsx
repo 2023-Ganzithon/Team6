@@ -113,6 +113,7 @@ const LoginPage = () => {
 
             isLoginSuccess = true; // 로그인 성공으로 플래그 설정
             isLoginFailed = false;
+
             gotoMap();
           } else {
             alert("비밀번호가 틀렸습니다.");
