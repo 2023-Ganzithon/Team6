@@ -107,19 +107,19 @@ const SignUpPage = () => {
   const onSubmit = async () => {
     try {
       //이메일 중복체크 get
-      const getResponse = await axios.get(`${BACKEND_URL}`);
+      const getResponse = await axios.get(``);
       const users = getResponse.data;
       console.log(users);
-      if (users.find((user) => user.email === email)) {
+      if (users.find((user) => user.numberEmail === email)) {
         alert("이미 있는 계정입니다.");
         return;
       }
       // 회원가입
-      const response = await axios.post(`${BACKEND_URL}`, {
+      const response = await axios.post(`/api/member/save`, {
         id: id,
-        password: password,
-        email: email,
-        name: name,
+        memberPassword: password,
+        memberEmail: email,
+        memberName: name,
       });
       console.log("회원가입 요청 성공:", response); // 테스트
 

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker"; // 날짜 선택 컴포넌트를 가져옵니다.
 import "react-datepicker/dist/react-datepicker.css"; // 스타일을 가져옵니다.
+import { useLocation } from "react-router-dom";
 import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
@@ -289,6 +290,14 @@ const RentDateColumn = styled.div`
 `;
 
 const Rental = () => {
+  // 나중에 주석 해제
+  const location = useLocation();
+  const { placeId } = location.state;
+
+  // 로컬스토리지에서 사용자 정보 가져오기
+  const { username } = localStorage.getItem("username");
+  const { useremail } = localStorage.getItem("useremail");
+
   const [quantity, setQuantity] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [confirmationMessage, setConfirmationMessage] = useState("");
@@ -296,9 +305,8 @@ const Rental = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   useEffect(() => {
-    // 컴포넌트가 처음 렌더링될 때만 실행
     setCurrentDate(new Date());
-  }, []); // 두 번째 매개변수로 빈 배열을 전달하여 컴포넌트가 처음 렌더링될 때만 useEffect를 실행
+  }, []);
 
   // 날짜 형식 설정 옵션
   const dateFormatOptions = {
@@ -321,13 +329,29 @@ const Rental = () => {
     setConfirmationMessage(""); // 모달 닫을 때 메시지 초기화
   };
 
-  const handleYesButtonClick = () => {
-    // "배터리를 빌렸습니다" 메시지 표시 후 모달 닫기
-    setConfirmationMessage("배터리를 빌렸습니다.");
-    setTimeout(() => {
-      setIsModalOpen(false);
-      setConfirmationMessage("");
-    }, 2000); // 2초 후 모달 닫기 (예시로 추가한 부분, 실제로는 빌리기 동작 등을 여기서 처리하세요.)
+  const handleYesButtonClick = async () => {
+    //연동 코드 추가
+    try {
+      const response = await axios.post(`/api/rent/${placeId}`, {
+        userEmail: useremail,
+        location: location, //무슨 장소 정보?-> 보내야하는가?
+        numofBattery: quantity,
+      });
+      console.log("회원가입 요청 성공:", response); // 테스트
+      if (!response.data) {
+        alert("등록에 실패했습니다");
+        throw new Error();
+      }
+      //navigate("/LoginPage");
+      // "배터리를 빌렸습니다" 메시지 표시 후 모달 닫기
+      setConfirmationMessage("배터리를 빌렸습니다.");
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setConfirmationMessage("");
+      }, 2000); // 2초 후 모달 닫기
+    } catch (error) {
+      console.error("빌리기 실패:", error);
+    }
   };
 
   return (

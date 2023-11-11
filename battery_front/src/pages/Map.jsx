@@ -147,10 +147,6 @@ const GoRentalBtn = styled.button`
 const { kakao } = window;
 
 const Map = () => {
-  // 이전 페이지에서 변수 받아오기-> rental 페이지에서 아래 코드 작성
-  // const location = useLocation();
-  // const { placeId } = location.state;
-
   const [locList, setLocList] = useState([]);
   const navigate = useNavigate();
   const goMyPage = () => {
@@ -173,13 +169,13 @@ const Map = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/view-map`);
+        const response = await axios.get(`/api/view-map`);
         setLocList(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-    fetchData(); // useEffect에서 fetchData 함수 호출
+    fetchData();
 
     var container = document.getElementById("map");
     var options = {
@@ -210,6 +206,7 @@ const Map = () => {
         setRemaining(data.remaining); // 수량state
         setPlaceId(data.placeId);
         setAddress(data.address);
+        localStorage("location", data.title);
       });
     });
 
