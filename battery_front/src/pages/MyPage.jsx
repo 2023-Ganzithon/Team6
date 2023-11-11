@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -33,7 +33,7 @@ const Rectangle1 = styled.div`
   border-radius: 0px 0px 25px 25px;
   width: 390px;
   height: 272px;
-  position: absolute;
+  position: relative;
   left: 0px;
   top: -1px;
 `;
@@ -211,7 +211,7 @@ const CurrentRental = styled.div`
   text-transform: none;
   position: absolute;
   left: 60px;
-  top: 300px; /* Rectangle1의 height에 맞춰 조절 */
+  top: 300px;
 `;
 
 const Line2 = styled.img`
@@ -229,9 +229,9 @@ const Rectangle2 = styled.div`
   border-radius: 10px;
   width: 341px;
   height: 188px;
-  position: absolute;
-  left: 24px;
-  top: 350px;
+  position: relative;
+  margin: auto;
+  margin-bottom: 30px;
 `;
 
 const Rental = styled.div`
@@ -251,64 +251,27 @@ const Rental = styled.div`
 
 const Place = styled(Rental)`
   left: 45px;
-  top: 40px;
+  top: 20px;
 `;
 
 const Term = styled(Rental)`
   left: 45px;
-  top: 80px;
+  top: 60px;
 `;
 
 const Quantity = styled(Rental)`
   left: 45px;
-  top: 120px;
+  top: 100px;
 `;
-
-const Rectangle3 = styled.div`
-  background-color: rgba(255, 255, 255, 1);
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  border-radius: 10px;
-  width: 341px;
-  height: 188px;
-  position: absolute;
-  left: 24px;
-  top: 570px;
-`;
-
-const Rental1 = styled.div`
-  text-align: center;
-  white-space: pre-wrap;
-  font-synthesis: none;
-  color: rgba(0, 0, 0, 1);
-  font-style: normal;
-  font-family: Inter;
-  font-weight: 700;
-  font-size: 15px;
-  letter-spacing: 0px;
-  text-decoration: none;
-  text-transform: none;
-  position: absolute;
-`;
-
-const Place1 = styled(Rental1)`
+const Price = styled(Rental)`
   left: 45px;
-  top: 40px;
-`;
-
-const Term1 = styled(Rental1)`
-  left: 45px;
-  top: 80px;
-`;
-
-const Quantity1 = styled(Rental1)`
-  left: 45px;
-  top: 120px;
+  top: 135px;
 `;
 
 const LogOut = styled.div`
   display: flex;
-  position: absolute;
-  isolation: isolate;
+  position: relative;
+  // isolation: isolate;
   flex-direction: row;
   justify-content: flex-start;
   align-items: flex-start;
@@ -317,7 +280,7 @@ const LogOut = styled.div`
   width: 77px;
   height: 28px;
   left: 280px;
-  top: 240px;
+  margin-top: 40px;
   text-align: center;
   justify-content: center;
   background-color: white;
@@ -386,32 +349,6 @@ const ReturnBtn = styled.div`
   cursor: pointer;
 `;
 
-const ReturnBtn1 = styled.div`
-  display: flex;
-  position: absolute;
-  justify-content: center;
-  align-items: center;
-  padding: 0px;
-  box-sizing: border-box;
-  width: 100px;
-  height: 28px;
-  left: 220px;
-  top: 150px;
-  background-color: #c4c2c2;
-  cursor: pointer;
-`;
-// 사
-
-const locationRed = styled.div`
-  background-image: url("${process.env.PUBLIC_URL}/images/locationRed.svg");
-  height: 20px;
-  width: 20px;
-  object-fit: contain;
-  position: absolute;
-  left: 126px;
-  top: 200px;
-`;
-
 const PlaceRow0 = styled.div`
   display: flex;
   align-items: row;
@@ -423,6 +360,10 @@ const TermRow0 = styled.div`
 `;
 
 const QuantityRow0 = styled.div`
+  display: flex;
+  align-items: row;
+`;
+const PriceRow0 = styled.div`
   display: flex;
   align-items: row;
 `;
@@ -441,7 +382,7 @@ const PlaceValue = styled.div`
   text-transform: none;
   position: absolute;
   left: 152px;
-  top: 40px;
+  top: 20px;
 `;
 
 const TermValue = styled.div`
@@ -458,7 +399,7 @@ const TermValue = styled.div`
   text-transform: none;
   position: absolute;
   left: 152px;
-  top: 80px;
+  top: 60px;
 `;
 
 const QuantityValue = styled.div`
@@ -475,25 +416,9 @@ const QuantityValue = styled.div`
   text-transform: none;
   position: absolute;
   left: 152px;
-  top: 120px;
+  top: 100px;
 `;
-
-const PlaceRow1 = styled.div`
-  display: flex;
-  align-items: row;
-`;
-
-const TermRow1 = styled.div`
-  display: flex;
-  align-items: row;
-`;
-
-const QuantityRow1 = styled.div`
-  display: flex;
-  align-items: row;
-`;
-
-const PlaceValue1 = styled.div`
+const PriceValue = styled.div`
   text-align: center;
   white-space: pre-wrap;
   font-synthesis: none;
@@ -507,70 +432,68 @@ const PlaceValue1 = styled.div`
   text-transform: none;
   position: absolute;
   left: 152px;
-  top: 40px;
+  top: 135px;
 `;
 
-const TermValue1 = styled.div`
-  text-align: center;
-  white-space: pre-wrap;
-  font-synthesis: none;
-  color: rgba(0, 0, 0, 1);
-  font-style: normal;
-  font-family: Inter;
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: 0px;
-  text-decoration: none;
-  text-transform: none;
-  position: absolute;
-  left: 152px;
-  top: 80px;
-`;
-
-const QuantityValue1 = styled.div`
-  text-align: center;
-  white-space: pre-wrap;
-  font-synthesis: none;
-  color: rgba(0, 0, 0, 1);
-  font-style: normal;
-  font-family: Inter;
-  font-weight: 400;
-  font-size: 15px;
-  letter-spacing: 0px;
-  text-decoration: none;
-  text-transform: none;
-  position: absolute;
-  left: 152px;
-  top: 120px;
+const BoxList = styled.div`
+  position: relative;
+  margin: auto;
+  width: 360px;
+  margin-top: 70px;
+  height: 400px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const MyPage = () => {
   const [showModal, setShowModal] = useState(false);
+
+  // 연동
+  // const { username } = localStorage.getItem("username");
+  // const { useremail } = localStorage.getItem("useremail");
+  const [rentalList, setRentalList] = useState([3]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       // API 호출
+  //       const response = await axios.post(
+  //         `${BACKEND_URL}/api/mypage/rental-info`,
+  //         {
+  //           name: username,
+  //           email: useremail,
+  //         }
+  //       );
+  //       setRentalList(response.data);
+  //       console.log(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
   const navigate = useNavigate();
 
   const handleReturnBtnClick = () => {
     setShowModal(true);
   };
-
-  const handleReturnBtn1Click = () => {
-    setShowModal(true);
-  };
-
   const handleYesClick = () => {
-    // 예 버튼을 눌렀을 때의 동작
+    // 예 버튼을 눌렀을 때
     setShowModal(false);
   };
-
   const handleNoClick = () => {
-    // 아니오 버튼을 눌렀을 때의 동작
+    // 아니오 버튼을 눌렀을 때
     setShowModal(false);
   };
-
   const handleBackClick2 = () => {
     navigate("/Map");
   };
-
   const handleLogOutClick = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("useremail");
     navigate("/");
   };
   return (
@@ -579,60 +502,48 @@ const MyPage = () => {
         <Smile></Smile>
         <BackArrow onClick={handleBackClick2}></BackArrow>
         <NameHiRow>
-          <NameHiValue>손오공</NameHiValue>
+          <NameHiValue>손오공</NameHiValue> {/* username */}
           <NameHi>님, 안녕하세요</NameHi>
         </NameHiRow>
-
         <MyInfo>내 정보</MyInfo>
         <Line1></Line1>
         <NameHiRow>
           <Name>이름</Name>
           <NameValue>손오공</NameValue>
         </NameHiRow>
-
         <EmailRow>
           <Email>이메일</Email>
-          <EmailValue>xxx@likelion.org</EmailValue>
+          <EmailValue>xxx@likelion.org</EmailValue> {/*{useremail} */}
         </EmailRow>
       </Rectangle1>
       <Battery></Battery>
       <CurrentRental>나의 대여 현황</CurrentRental>
       <Line2></Line2>
-      <Rectangle2>
-        <PlaceRow0>
-          <Place>대여 위치</Place>
-          <locationRed></locationRed>
-          <PlaceValue>GS25 판교역점</PlaceValue>
-        </PlaceRow0>
-        <TermRow0>
-          <Term>대여 기간</Term>
-          <TermValue>2023/11/04-현재</TermValue>
-        </TermRow0>
-        <QuantityRow0>
-          <Quantity>대여 수량</Quantity>
-          <QuantityValue>5개</QuantityValue>
-        </QuantityRow0>
-
-        <ReturnBtn onClick={handleReturnBtnClick}>반납하기</ReturnBtn>
-      </Rectangle2>
-      <Rectangle3>
-        <PlaceRow1>
-          <Place1>대여 위치</Place1>
-          <PlaceValue1>구름</PlaceValue1>
-        </PlaceRow1>
-        <TermRow1>
-          <Term1>대여 기간</Term1>
-          <TermValue1>2023/11/11-현재</TermValue1>
-        </TermRow1>
-        <QuantityRow1>
-          <Quantity1>대여 수량</Quantity1>
-          <QuantityValue1>5개</QuantityValue1>
-        </QuantityRow1>
-
-        <ReturnBtn1 onClick={handleReturnBtn1Click}>반납하기</ReturnBtn1>
-        <LogOut onClick={handleLogOutClick}>로그아웃</LogOut>
-      </Rectangle3>
-
+      {/* 추가 */}
+      <BoxList>
+        {rentalList.map((e) => (
+          <Rectangle2 key={e.id}>
+            <PlaceRow0>
+              <Place>대여 위치</Place>
+              <PlaceValue>GS25 판교역점</PlaceValue>
+            </PlaceRow0>
+            <TermRow0>
+              <Term>대여 기간</Term>
+              <TermValue>2023/11/04-현재</TermValue>
+            </TermRow0>
+            <QuantityRow0>
+              <Quantity>대여 수량</Quantity>
+              <QuantityValue>5개</QuantityValue>
+            </QuantityRow0>
+            <PriceRow0>
+              <Price>가격</Price>
+              <PriceValue>5000원</PriceValue>
+            </PriceRow0>
+            <ReturnBtn onClick={handleReturnBtnClick}>반납하기</ReturnBtn>
+          </Rectangle2>
+        ))}
+      </BoxList>
+      {/* 반납하기 모달 */}
       {showModal && (
         <ModalBackground>
           <ModalContent>
@@ -644,6 +555,7 @@ const MyPage = () => {
           </ModalContent>
         </ModalBackground>
       )}
+      <LogOut onClick={handleLogOutClick}>로그아웃</LogOut>
     </Container>
   );
 };

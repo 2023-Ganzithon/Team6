@@ -2,7 +2,7 @@ import React from "react";
 import styled, { css, keyframes } from "styled-components";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//import axios from "axios";
+import axios from "axios";
 const BACKEND_URL = "127.0.0.1:8000";
 
 const Container = styled.div`
@@ -11,7 +11,7 @@ const Container = styled.div`
   min-height: 844px;
   position: relative;
   text-align: center;
-  background-color: #f5f5f5;
+  background-color: white;
   overflow: hidden; /* 스크롤바 숨기기 */
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -35,7 +35,8 @@ const MapBox = styled.div`
 const InfoText = styled.div`
   position: relative;
   margin: auto;
-  top: 10px;
+  margin-bottom: 20px;
+  top: 13px;
   color: #000;
   font-family: Inter;
   font-size: 14px;
@@ -103,12 +104,24 @@ const LocText = styled.div`
   font-family: Inter;
   font-size: 15px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 600;
   line-height: normal;
   left: 32px;
   text-align: left;
 `;
-
+const AddrText = styled.div`
+  position: relative;
+  color: #fff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  left: 20px;
+  top: 5px;
+  text-align: left;
+`;
 const Remaining = styled.div`
   position: relative;
   color: #fff;
@@ -118,7 +131,7 @@ const Remaining = styled.div`
   font-weight: 700;
   line-height: normal;
   right: 30px;
-  top: 20px;
+  top: 15px;
 `;
 const GoRentalBtn = styled.button`
   position: relative;
@@ -128,20 +141,24 @@ const GoRentalBtn = styled.button`
   background-size: cover;
   background-position: center;
   border: none;
-  margin-top: 50px;
+  margin-top: 35px;
   margin-left: 245px;
 `;
-
 const { kakao } = window;
 
 const Map = () => {
+  // 이전 페이지에서 변수 받아오기-> rental 페이지에서 아래 코드 작성
+  // const location = useLocation();
+  // const { placeId } = location.state;
+
+  const [locList, setLocList] = useState([]);
   const navigate = useNavigate();
   const goMyPage = () => {
     navigate("/MyPage");
   };
   const goRental = () => {
     // 대여 장소 같이 보내야 함
-    navigate("/Rental");
+    navigate("/Rental", { state: { placeId: placeId } });
   };
   const [modalOpen, setModalOpen] = useState(false);
   const closeModal = () => {
@@ -149,45 +166,51 @@ const Map = () => {
   };
   const [selectedMarkerTitle, setSelectedMarkerTitle] = useState("");
   const [remaining, setRemaining] = useState("");
+  const [placeId, setPlaceId] = useState("");
+  const [address, setAddress] = useState("");
 
   // 카카오맵 띄우기
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/view-map`);
+        setLocList(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData(); // useEffect에서 fetchData 함수 호출
+
     var container = document.getElementById("map");
     var options = {
-      center: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657), // 지도 중심좌표(판교 디지털센터)
+      center: new kakao.maps.LatLng(37.39478621693671, 127.10961115760732), // 지도 중심좌표
       level: 4,
     };
     var map = new kakao.maps.Map(container, options);
 
+    // 마커 정보 배열
+    const markerData = locList.map((data) => ({
+      title: data.name,
+      position: new kakao.maps.LatLng(data.xmap, data.ymap),
+      remaining: data.numOfRemain,
+      placeId: data.placeId,
+      address: data.address,
+    }));
     // 마커 생성
-    var markerPosition = new kakao.maps.LatLng(
-      37.401121424252246,
-      127.10347075711505
-    );
-    var markerPosition2 = new kakao.maps.LatLng(
-      37.4033458356304,
-      127.0995151230583
-    );
-    var marker = new kakao.maps.Marker({
-      position: markerPosition,
-    });
-    var marker2 = new kakao.maps.Marker({
-      position: markerPosition2,
-    });
-    marker.setMap(map);
-    marker2.setMap(map);
+    markerData.forEach((data) => {
+      const marker = new kakao.maps.Marker({
+        position: data.position,
+      });
+      marker.setMap(map);
 
-    // 마커 클릭 이벤트
-    kakao.maps.event.addListener(marker, "click", () => {
-      setModalOpen(true);
-      setSelectedMarkerTitle("GS25 판교GB점");
-      setRemaining("30");
-    });
-
-    kakao.maps.event.addListener(marker2, "click", () => {
-      setModalOpen(true);
-      setSelectedMarkerTitle("장소2");
-      setRemaining("20");
+      // 클릭 시 이벤트 state설정
+      kakao.maps.event.addListener(marker, "click", () => {
+        setModalOpen(true);
+        setSelectedMarkerTitle(data.title); // 장소state
+        setRemaining(data.remaining); // 수량state
+        setPlaceId(data.placeId);
+        setAddress(data.address);
+      });
     });
 
     kakao.maps.event.addListener(map, "click", () => {
@@ -207,12 +230,13 @@ const Map = () => {
           }}
         />
       </MypageBtn>
-      <MapBox id="map" style={{ width: "370px", height: "760px" }}></MapBox>
+      <MapBox id="map" style={{ width: "100%", height: "765px" }}></MapBox>
       {/* 모달 */}
       <Modal open={modalOpen}>
         <PopupBox>
           <LocImg></LocImg>
-          <LocText>{selectedMarkerTitle}</LocText>
+          <LocText>위치: {selectedMarkerTitle}</LocText>
+          <AddrText>상세 주소:{address}</AddrText>
           <Remaining>충전식 배터리 잔여 수량: {remaining}개</Remaining>
           <GoRentalBtn onClick={goRental}></GoRentalBtn>
         </PopupBox>
