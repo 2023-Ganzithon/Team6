@@ -104,12 +104,24 @@ const LocText = styled.div`
   font-family: Inter;
   font-size: 15px;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 600;
   line-height: normal;
   left: 32px;
   text-align: left;
 `;
-
+const AddrText = styled.div`
+  position: relative;
+  color: #fff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  left: 20px;
+  top: 5px;
+  text-align: left;
+`;
 const Remaining = styled.div`
   position: relative;
   color: #fff;
@@ -119,7 +131,7 @@ const Remaining = styled.div`
   font-weight: 700;
   line-height: normal;
   right: 30px;
-  top: 20px;
+  top: 15px;
 `;
 const GoRentalBtn = styled.button`
   position: relative;
@@ -129,10 +141,9 @@ const GoRentalBtn = styled.button`
   background-size: cover;
   background-position: center;
   border: none;
-  margin-top: 50px;
-  margin-left: 250px;
+  margin-top: 35px;
+  margin-left: 245px;
 `;
-
 const { kakao } = window;
 
 const Map = () => {
@@ -156,13 +167,13 @@ const Map = () => {
   const [selectedMarkerTitle, setSelectedMarkerTitle] = useState("");
   const [remaining, setRemaining] = useState("");
   const [placeId, setPlaceId] = useState("");
+  const [address, setAddress] = useState("");
 
   // 카카오맵 띄우기
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/api/view-map`);
-        console.log(response.data);
         setLocList(response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -172,37 +183,36 @@ const Map = () => {
 
     var container = document.getElementById("map");
     var options = {
-      center: new kakao.maps.LatLng(37.39472290444371, 127.10987080718944), // 지도 중심좌표(판교 디지털센터)
+      center: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657), // 지도 중심좌표(판교 디지털센터)
       level: 4,
     };
     var map = new kakao.maps.Map(container, options);
 
-    // const markerData = [
-    //   {
-    //     title: "GS25 판교GB점",
-    //     position: new kakao.maps.LatLng(37.401121424252246, 127.10347075711505),
-    //     remaining: 20,
-    //   },
-    //   {
-    //     title: "장소2",
-    //     position: new kakao.maps.LatLng(37.4033458356304, 127.0995151230583),
-    //     remaining: 30,
-    //   },
-    // ];
-
+    // 마커 정보 배열
+    const markerData = locList.map((data) => ({
+      title: data.name,
+      position: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657),
+      remaining: data.numOfRemain,
+      placeId: data.placeId,
+      address: data.address,
+    }));
     // 마커 생성
-    locList.forEach((data) => {
+    markerData.forEach((data) => {
       const marker = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(data.xmap, data.ymap),
+        position: data.position,
       });
       marker.setMap(map);
+
+      // 클릭 시 이벤트 state설정
       kakao.maps.event.addListener(marker, "click", () => {
         setModalOpen(true);
-        setSelectedMarkerTitle(data.name); // 장소state
-        setRemaining(data.numOfRemain); // 수량state
-        setPlaceId(data.id);
+        setSelectedMarkerTitle(data.title); // 장소state
+        setRemaining(data.remaining); // 수량state
+        setPlaceId(data.placeId);
+        setAddress(data.address);
       });
     });
+
     kakao.maps.event.addListener(map, "click", () => {
       closeModal();
     });
@@ -225,7 +235,8 @@ const Map = () => {
       <Modal open={modalOpen}>
         <PopupBox>
           <LocImg></LocImg>
-          <LocText>{selectedMarkerTitle}</LocText>
+          <LocText>위치: {selectedMarkerTitle}</LocText>
+          <AddrText>상세 주소:{address}</AddrText>
           <Remaining>충전식 배터리 잔여 수량: {remaining}개</Remaining>
           <GoRentalBtn onClick={goRental}></GoRentalBtn>
         </PopupBox>
