@@ -183,7 +183,7 @@ const Map = () => {
 
     var container = document.getElementById("map");
     var options = {
-      center: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657), // 지도 중심좌표(판교 디지털센터)
+      center: new kakao.maps.LatLng(37.39478621693671, 127.10961115760732), // 지도 중심좌표
       level: 4,
     };
     var map = new kakao.maps.Map(container, options);
@@ -191,7 +191,7 @@ const Map = () => {
     // 마커 정보 배열
     const markerData = locList.map((data) => ({
       title: data.name,
-      position: new kakao.maps.LatLng(37.40238933620983, 127.10118541040657),
+      position: new kakao.maps.LatLng(data.xmap, data.ymap),
       remaining: data.numOfRemain,
       placeId: data.placeId,
       address: data.address,
